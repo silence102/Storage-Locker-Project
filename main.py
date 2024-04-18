@@ -13,7 +13,7 @@ def register():
     user_id = data['EMAIL']
     user_pw = data['PASSWORD']
     
-    if validation_name(user_name) and validation_id(user_id) and validation_pw(user_pw):
+    if validation_name(user_name) and validation_id(user_id) and email_overlap(user_id) and validation_pw(user_pw):
         connection = pymysql.connect(host='localhost', port='8080', db='storagelocker', user='root', pw='1807992102', charset='utf8')
         cursor = connection.cursor(pymysql.cursors.DictCursor)
 
@@ -22,7 +22,16 @@ def register():
         connection.commit()
         connection.close()
 
-        return jsonify({'message':'회원가입 완료'})
+        return jsonify({'message':'회원가입이 완료되었습니다.'})
+
+    elif validation_id(user_id) or validation_pw(user_pw):
+        return jsonify({'message':'아이디와 비밀번호를 양식에 맞게 작성해 주세요'})
+    elif email_overlap(user_id) == False:
+        return jsonify({'message':'이미 사용 중인 이메일 주소입니다.'})
+    elif validation_name(user_name) == False:
+        return jsonify({'message':'올바른 이름을 입력해주세요'})
+    else:
+        return jsonify({'message':'잘못된 입력입니다.'})
 
 def validation_name(name):
     if len(name) > 0 and len(name) < 20:
@@ -31,10 +40,31 @@ def validation_name(name):
         return False
 
 def validation_id(id):
-    return 1
+    if '@' in id and id > 0 and id < 30:
+        return True
+    else:
+        return False
+    
+def email_overlap(email):
+    connection = pymysql.connect(host='localhost', port=8080, db='storagelocker', user='root', password='1807992102', charser='utf8')
+    cursor = connection.cursor(pymysql.cusors.DictCursor)
+
+    sql = "SELECT * USER_LOGIN WHERE EMAIL = %s"
+    cursor.execute(sql, (email,))
+    result = cursor.fetchone()
+
+    connection.close()
+
+    if result:
+        return False
+    else:
+        return True
 
 def validation_pw(pw):
-    return 0
+    if pw > 8 and pw < 30:
+        return True
+    else:
+        return False
 
 # 로그인 엔드포인트 정의, POST 메소드로 설정
 @app.route('/login', method = ['POST'])
@@ -65,7 +95,7 @@ def login():
         db_id = db_data[0]['EMAIL']
         db_pw = db_data[0]['PASSWORD']
 
-        return jsonify({'message':'로그인이 완료 되었습니다.'})
+        return jsonify({'message':f'{db_name}님 로그인이 완료 되었습니다.'})
     else:
         return jsonify({'message':'로그인 정보를 다시 입력해주세요.'})
     
