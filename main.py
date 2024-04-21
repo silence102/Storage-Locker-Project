@@ -6,6 +6,27 @@ import pymysql
 # Flask 앱 인스턴스 생성
 app = Flask(__name__)
 
+@app.route('/home', methods=['GET','POST'])
+def home():
+    connection = pymysql.connect(host='localhost', port='8080', db='storagelocker', user='root', pw='1807992102', charset='utf8')
+    conn = connection.cursor(pymysql.cursors.DictCursor)
+    sql = "select * from user_storage where ... "
+    conn.execute(sql)
+    result = conn.fetchall()
+    return "미정"
+
+@app.route('/log')
+def log():
+    return 1
+
+@app.route('/my_page')
+def mypage():
+    return 2
+
+@app.route('/info')
+def info():
+    return 3
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -17,7 +38,7 @@ def register():
         connection = pymysql.connect(host='localhost', port='8080', db='storagelocker', user='root', pw='1807992102', charset='utf8')
         cursor = connection.cursor(pymysql.cursors.DictCursor)
 
-        sql = " "
+        sql = ""
         
         connection.commit()
         connection.close()
@@ -25,7 +46,7 @@ def register():
         return jsonify({'message':'회원가입이 완료되었습니다.'})
 
     elif validation_id(user_id) or validation_pw(user_pw):
-        return jsonify({'message':'아이디와 비밀번호를 양식에 맞게 작성해 주세요'})
+        return jsonify({'message':'아이디 또는 비밀번호를 양식에 맞게 작성해 주세요'})
     elif email_overlap(user_id) == False:
         return jsonify({'message':'이미 사용 중인 이메일 주소입니다.'})
     elif validation_name(user_name) == False:
