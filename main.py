@@ -6,6 +6,7 @@ import pymysql
 # Flask 앱 인스턴스 생성
 app = Flask(__name__)
 
+# 홈 페이지 기능
 @app.route('/home', methods=['GET','POST'])
 def home():
     connection = pymysql.connect(host='localhost', port='8080', db='storagelocker', user='root', pw='1807992102', charset='utf8')
@@ -13,20 +14,24 @@ def home():
     sql = "select * from user_storage where ... "
     conn.execute(sql)
     result = conn.fetchall()
-    return "미정"
+    return "미정" # 임시 반환 값
 
+# 로그인 페이지 기능
 @app.route('/log')
 def log():
     return 1
 
+# 마이페이지 기능
 @app.route('/my_page')
 def mypage():
     return 2
 
+# 보관함 정보에 대한 기능
 @app.route('/info')
 def info():
     return 3
 
+# 회원가입 기능, POST 메소드로 설정
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
