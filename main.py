@@ -59,18 +59,22 @@ def register():
     else:
         return jsonify({'message':'잘못된 입력입니다.'})
 
+
+# 유저 이름 형식 확인
 def validation_name(name):
     if len(name) > 0 and len(name) < 20:
         return True
     else:
         return False
 
+# 유저 아이디 형식 확인
 def validation_id(id):
     if '@' in id and id > 0 and id < 30:
         return True
     else:
         return False
-    
+
+# 유저 아이디 중복 확인
 def email_overlap(email):
     connection = pymysql.connect(host='localhost', port=8080, db='storagelocker', user='root', password='1807992102', charser='utf8')
     cursor = connection.cursor(pymysql.cusors.DictCursor)
@@ -86,6 +90,7 @@ def email_overlap(email):
     else:
         return True
 
+# 유저 비밀번호 형식 확인
 def validation_pw(pw):
     if pw > 8 and pw < 30:
         return True
